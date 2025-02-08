@@ -94,7 +94,9 @@
                 <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
             </div>
         </li>
-        <!-- Notifications Dropdown Menu -->
+
+
+        <!-- User Dropdown Menu -->
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
                 <i class="far fa-bell"></i>
@@ -126,10 +128,34 @@
                 <i class="fas fa-expand-arrows-alt"></i>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-                <i class="fas fa-th-large"></i>
+        <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="javascript:void(0)">
+                <i class="far fa-user"></i>
             </a>
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                <a href="javascript:void(0)" class="dropdown-item">
+                    <!-- Message Start -->
+                    <div class="media">
+                        <img src="{{asset(auth()->user()->image)}}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                        <div class="media-body">
+                            <h3 class="dropdown-item-title">
+                                {{auth()->user()->name}}
+                            </h3>
+                            <p class="text-sm">Yetki Admin</p>
+                        </div>
+                    </div>
+                    <!-- Message End -->
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="javascript:void(0)" class="dropdown-item" onclick="document.getElementById('logout-form').submit()">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Çıkış Yap
+                </a>
+                <div class="dropdown-divider"></div>
+            </div>
         </li>
     </ul>
 </nav>
+
+<form action="{{route('logout')}}" method="post" class="d-none" id="logout-form">
+    @csrf
+</form>
