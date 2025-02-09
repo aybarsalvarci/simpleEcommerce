@@ -29,6 +29,12 @@
         </div>
     @endif
 
+    @if(session()->has('status'))
+        <div class="login-box alert alert-danger mt-12">
+            <span>{{session()->get('status')}}</span>
+        </div>
+    @endif
+
     @yield('content')
 </div>
 
