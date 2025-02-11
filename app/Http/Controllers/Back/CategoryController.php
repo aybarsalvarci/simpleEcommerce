@@ -89,6 +89,18 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $category = Category::findOrFail($id);
+
+        try {
+            $category->delete();
+            toast("Kategori silindi.", "success");
+            return redirect()->route('back.category.index');
+        }
+        catch (\Exception $exception)
+        {
+            Log::error($exception);
+            toast("Bir hata oluştu.", "error");
+            return redirect()->back();
+        }
     }
 }
