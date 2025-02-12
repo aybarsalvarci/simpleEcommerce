@@ -12,6 +12,7 @@ Route::prefix('/dashboard')->middleware('auth')->name('back.')->group(function()
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
+    Route::post('/category/status-update/{id}', [CategoryController::class, 'statusUpdate'])->name('category.statusUpdate');
     Route::resource('/category', CategoryController::class);
 });
 

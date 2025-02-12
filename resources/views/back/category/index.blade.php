@@ -40,7 +40,11 @@
                             <td>{{$loop->iteration}}</td>
                             <td>{{$category->name}}</td>
                             <td>{{$category->slug}}</td>
-                            <td>{{$category->status}}</td>
+                            <td>
+                                <input type="checkbox" {{$category->status ? 'checked' : ''}} name="status"
+                                       data-bootstrap-switch data-off-color="danger" data-on-color="success"
+                                       data-on-text="Aktif" data-off-text="Pasif" data-id="{{$category->id}}">
+                            </td>
                             <td>
                                 <a href="{{route('back.category.edit', $category->id)}}" class="btn btn-warning"><i
                                         class="fa fa-pen"></i></a>
@@ -68,6 +72,8 @@
 @endsection
 
 @push('js')
+    <!-- Bootstrap Switch -->
+    <script src="{{asset('back/plugins/bootstrap-switch/js/bootstrap-switch.min.js')}}"></script>
     <script>
         $(function () {
             $('.delete-button').click(function () {
@@ -78,8 +84,33 @@
                 form.submit();
             });
         });
+
+        $("input[data-bootstrap-switch]").each(function () {
+            $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        })
+
+        $("input[data-bootstrap-switch]").on('switchChange.bootstrapSwitch', function () {
+            let id = $(this).data('id');
+            let url = "{{route('back.category.statusUpdate', 'catID')}}".replace('catID', id);
+            $.ajax({
+                method: "POST",
+                url: url,
+                headers: {
+                    "X-CSRF-TOKEN" : "{{csrf_token()}}"
+                },
+                success : function (resp)
+                {
+                    alert("Güncellendi");
+                },
+                error: function(resp)
+                {
+                    alert("Bir hata oluştu.");
+                }
+            });
+        });
     </script>
 @endpush
+
 
 
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Category\CreateCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Models\Category;
+use App\Services\Abstract\ICategoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -101,6 +102,21 @@ class CategoryController extends Controller
             Log::error($exception);
             toast("Bir hata oluştu.", "error");
             return redirect()->back();
+        }
+    }
+
+    public function statusUpdate(int $id)
+    {
+        $category = Category::findOrFail($id);
+
+        try {
+            $category->update(['status' => !$category->status]);
+            return response(content:"Güncellendi.");
+        }
+        catch (\Exception $exception)
+        {
+            Log::error($exception);
+            return response(content: "Bir hata oluştu.", status:500);
         }
     }
 }
