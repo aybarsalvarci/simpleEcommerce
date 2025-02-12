@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Back\CategoryController;
 use App\Http\Controllers\Back\DashboardController;
+use App\Http\Controllers\Back\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,5 +15,7 @@ Route::prefix('/dashboard')->middleware('auth')->name('back.')->group(function()
 
     Route::post('/category/status-update/{id}', [CategoryController::class, 'statusUpdate'])->name('category.statusUpdate');
     Route::resource('/category', CategoryController::class);
+
+    Route::resource('/product', ProductController::class);
 });
 

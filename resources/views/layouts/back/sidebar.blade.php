@@ -57,6 +57,16 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a href="{{route('back.product.index')}}" class="nav-link
+                    {{request()->routeIs('back.product.*')  ? 'active' : ''}}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Kategoriler
+                        </p>
+                    </a>
+                </li>
+
 
 
 {{--                <li class="nav-item menu-open">--}}
