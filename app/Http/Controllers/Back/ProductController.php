@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Back;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\CreateProductRequest;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 class ProductController extends Controller
 {
     /**
@@ -14,10 +16,10 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::with([
-            'user' => function($query){
+            'user' => function ($query) {
                 $query->select('id', 'name');
             },
-            'category' => function($query){
+            'category' => function ($query) {
                 $query->select('id', 'name');
             }
         ])->orderBy('created_at', 'DESC')->paginate(10);
@@ -29,15 +31,44 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::where('status', 1)->get();
+        return view('back.product.create', compact('categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateProductRequest $request)
     {
-        //
+        $request->merge(['user_id' => auth()->user()->id]);
+        try {
+            $product = Product::create($request->except('_token', 'images'));
+        } catch (\Exception $exception) {
+            Log::error($exception);
+            toast("Bir hata oluştu!", "error");
+            return redirect()->back();
+        }
+
+        try {
+
+            foreach ($request->images as $image) {
+                $imageName = $product->slug . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('public/images/products', $imageName);
+                $product->images()->create([
+                    'path' => 'storage/public/images/products/' . $imageName,
+                    'is_thumbnail' => false,
+                ]);
+            }
+
+            toast("Ürün oluşturuldu!", "success");
+            return redirect()->route('back.product.index');
+        }
+        catch (\Exception $exception) {
+            Log::error($exception);
+            toast("Görseller yüklenirken bir hata oluştu!", "error");
+            return redirect()->back();
+        }
+
     }
 
     /**

@@ -18,6 +18,9 @@ return new class extends Migration
             $table->boolean('is_thumbnail')->default(false);
             $table->integer('order')->default(0);
             $table->timestamps();
+
+            $table->foreign('product_id')->references('id')
+                ->on('products')->onDelete('cascade');
         });
     }
 

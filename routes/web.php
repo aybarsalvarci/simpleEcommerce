@@ -18,4 +18,3 @@ Route::prefix('/dashboard')->middleware('auth')->name('back.')->group(function()
 
     Route::resource('/product', ProductController::class);
 });
-
