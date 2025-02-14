@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Back;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\CreateProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 use App\Models\Category;
+use App\Models\Image;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -84,15 +86,44 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $categories = Category::all();
+        $product = Product::with(['category', 'images'])->findOrFail($id);
+        return view('back.product.edit', compact('product', 'categories'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateProductRequest $request, string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+
+        try {
+            $product->update($request->except(['_token', '_method', 'images']));
+        }
+        catch (\Exception $exception) {
+            Log::error($exception);
+            toast("Değişiklikler kaydedilirken bir hata oluştu!", "error");
+            return redirect()->back();
+        }
+
+        try {
+            foreach ($request->images as $image) {
+                $imageName = $product->slug . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('public/images/products', $imageName);
+                $product->images()->create([
+                    'path' => 'storage/public/images/products/' . $imageName,
+                ]);
+            }
+        }
+        catch (\Exception $exception) {
+            Log::error($exception);
+            toast("Görseller yüklenirken bir hata oluştu.", "error");
+            return redirect()->back();
+        }
+
+        toast("Değişiklikler başarıyla kaydedildi.");
+        return redirect()->back();
     }
 
     /**
@@ -101,5 +132,21 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function imageDelete(string $id)
+    {
+        $image = Image::findOrFail($id);
+
+        try{
+            $image->delete();
+            toast("Görsel silindi.", "success");
+            return redirect()->back();
+        }
+        catch (\Exception $exception){
+            Log::error($exception);
+            toast("Görsel silinirken bir hata oluştu.");
+            return redirect()->back();
+        }
     }
 }
