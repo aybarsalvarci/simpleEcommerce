@@ -131,7 +131,18 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+
+        try {
+            $product->delete();
+            toast("Ürün başarıyla silindi.", "success");
+            return redirect()->back();
+        }
+        catch (\Exception $exception) {
+            Log::error($exception);
+            toast("Ürün silinirken bir hata oluştu.", "error");
+            return redirect()->back();
+        }
     }
 
     public function imageDelete(string $id)

@@ -86,7 +86,7 @@
         $(function () {
             $('.delete-button').click(function () {
                 let id = $(this).data('id');
-                let url = "{{route('back.category.destroy', 'categoryID')}}".replace('categoryID', id);
+                let url = "{{route('back.product.destroy', 'productID')}}".replace('productID', id);
                 let form = $('#delete-form');
                 form.attr('action', url);
                 form.submit();
@@ -116,6 +116,8 @@
                 }
             });
         });
+
+
     </script>
 @endpush
 
